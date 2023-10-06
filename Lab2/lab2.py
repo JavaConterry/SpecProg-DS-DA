@@ -54,11 +54,68 @@ def get_df_from_files(folder_name="DATA"):
             saved_csvs[__get_id_from_name(file_name)] = df
     return(saved_csvs)
 
+def change_indices(dict_to_change, change_layout):
+    if(type(change_layout) is not dict):
+        return
+    rewritten_dict = dict()
+    for key in dict_to_change:
+        rewritten_dict[change_layout[key]] = dict_to_change[key]
+    return rewritten_dict
     
+def calculate_VHI(data_frames):
+    begin = sorted(list(data_frames.keys()))[0]
+    for df_ind in range(begin, len(data_frames)+begin):
+        data_frames[df_ind][" VHI"] = (data_frames[df_ind]["VCI"]+data_frames[df_ind]["TCI"])/2
+    return data_frames
 
 
 
 folder_name="DATA"
 if(folder_name not in os.listdir() or len(os.listdir(folder_name)) == 0):
     save_all_province_datas(folder_name="DATA")
-print(get_df_from_files()[1])
+print(get_df_from_files().keys())
+get_df_from_files()
+
+
+change_map = {
+    1: 22,
+    2: 24,
+    3: 23,
+    4: 25,
+    5: 3,
+    6: 4,
+    7: 8,
+    8: 19,
+    9: 20,
+    10: 21,
+    11: 9,
+    12: 26, #kyiv - 26
+    13: 10,
+    14: 11,
+    15: 12,
+    16: 13,
+    17: 14,
+    18: 15,
+    19: 16,
+    20: 27, #sevastopol - 27
+    21: 17,
+    22: 18,
+    23: 6,
+    24: 1,
+    25: 2,
+    26: 7,
+    27: 5
+}
+
+
+dfs = get_df_from_files()
+new_dfs = change_indices(dfs, change_map)
+calculated_dfs = calculate_VHI(new_dfs)
+
+
+# handling missing data TODO: clean this mess
+begin = sorted(list(calculated_dfs.keys()))[0]
+for df_ind in range(begin, len(calculated_dfs)+begin):
+    calculated_dfs[df_ind] = calculated_dfs[df_ind].drop(
+        calculated_dfs[df_ind].loc[calculated_dfs[df_ind][" VHI"]<=-0.9].index)
+print(calculated_dfs)
