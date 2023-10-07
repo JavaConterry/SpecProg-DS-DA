@@ -5,6 +5,7 @@ import re
 import os
 from settings import change_map
 from settings import header
+import anima
 
 
 def request_province_data(proovince_id = 1):
@@ -33,6 +34,7 @@ def save_all_province_datas(folder_name="DATA"):
 
     for i in range(1, 28):
         write_province_data_into_file((request_province_data(i), str(i)), folder_name=folder_name)
+        anima.update(i)
     print("Files are saved!")
     print("Saving process time: ", datetime.now()-saving_time)
 
