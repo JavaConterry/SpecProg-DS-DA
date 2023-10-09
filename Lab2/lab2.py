@@ -79,22 +79,23 @@ def moderate_VHI_below(df, max_VHI):
     return df[(60<df["VHI"]) & (df["VHI"]<max_VHI)][["Year","VHI"]].reset_index(drop=True)
 
 
-def lab2_task_folower():
+def request_data():
     folder_name="DATA"
     if(folder_name not in os.listdir() or len(os.listdir(folder_name)) == 0):
         save_all_province_datas(folder_name="DATA")
     dfs = get_df_from_files()
-    print(dfs[1].columns)
-    print(dfs.keys())
-    print(dfs[1])
     dfs = change_indices(dfs, change_map)
 
-    #missed data handling
     begin = sorted(list(dfs.keys()))[0]
     for df_ind in range(begin, len(dfs)+begin):
         dfs[df_ind] = dfs[df_ind].drop(
             dfs[df_ind].loc[dfs[df_ind]["VHI"]<=-0.9].index)
-    print(dfs[1])
+            
+    return dfs
+
+
+def lab2_task_folower():
+    dfs = request_data()
 
     #min max VHI
     vhi_1, minv, maxv = VHI_extr(dfs[1])
