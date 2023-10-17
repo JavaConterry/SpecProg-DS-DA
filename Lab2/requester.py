@@ -82,7 +82,7 @@ def moderate_VHI_below(df, max_VHI):
 def request_data():
     folder_name="DATA"
     if(folder_name not in os.listdir() or len(os.listdir(folder_name)) == 0):
-        save_all_province_datas(folder_name="DATA")
+        save_all_province_datas(folder_name=folder_name )
     dfs = get_df_from_files()
     dfs = change_indices(dfs, change_map)
 

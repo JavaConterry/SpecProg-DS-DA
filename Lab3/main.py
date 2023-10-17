@@ -1,4 +1,5 @@
 from spyre import server
-import sys
-sys.path.insert(0, '/Lab2')
-from Lab2.lab2 import request_data
+import lab2 as NOAA_access
+
+data = NOAA_access.request_data
+print(data[1])
