@@ -1,3 +1,4 @@
-import lab2
+import requester
 
-lab2.lab2_task_folower()
+data = requester.request_data()
+print(data[3])
