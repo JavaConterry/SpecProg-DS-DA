@@ -1,5 +1,6 @@
 from spyre import server
 import sys
+import matplotlib.pyplot as plt
 
 sys.path.insert(1, 'C:\\Users\\glebo\\Documents\\University\\SpecProg\\Lab2') #path to lab2 lib
 from requester import request_data
@@ -93,15 +94,23 @@ class NOAA_vis(server.App):
         time = params['time']
         y1, w1, y2, w2 = parseYWYW(time)
         village_data = data[int(params['village'])]
-        return village_data[(village_data['Year'] > y1) | ((village_data['Year'] == y1) & (village_data['Week'] >= w1)) & (village_data['Year'] < y2) | ((village_data['Year'] == y2) & (village_data['Week'] <= w2))]
+        #TODO fixes required
+        df = village_data[(village_data['Year'] > y1) | ((village_data['Year'] == y1) & (village_data['Week'] >= w1)) & (village_data['Year'] < y2) | (
+            (village_data['Year'] == y2) & (village_data['Week'] <= w2))]
+        return(df[['Year', 'Week', params['ticker']]])
+        
 
-    # def getPlot(self, params):
-    #     df = self.getData(params).drop(['Volume'], axis=1)
-    #     plt_obj = df.plot()
-    #     plt_obj.set_ylabel("Price")
-    #     plt_obj.set_xlabel("Date")
-    #     plt_obj.set_title(params['ticker'])
-    #     return plt_obj.get_figure()
+    def getPlot(self, params):
+        df = self.getData(params)
+        df_copy = df.copy()
+        df_copy = df_copy.reset_index(drop=True)
+        for i in range(len(df_copy[['Year','Week']].values)):
+            df_copy['Week'][i] = str(df_copy['Year'][i]).join(str(df_copy['Week'][i]))
+            df_copy.drop(['Year'], axis=1)
+        print(df_copy)
+        plot = df_copy.plot(x='Week', y=params['ticker'], xlabel="Year-week", ylabel="Value")
+        return plot.get_figure()
+        #TODO fix the data naming
 
 
 app = NOAA_vis()
