@@ -1,6 +1,7 @@
 from spyre import server
 import sys
 import matplotlib.pyplot as plt
+import pandas as pd
 
 sys.path.insert(1, 'C:\\Users\\glebo\\Documents\\University\\SpecProg\\Lab2') #path to lab2 lib
 from requester import request_data
@@ -94,10 +95,8 @@ class NOAA_vis(server.App):
         time = params['time']
         y1, w1, y2, w2 = parseYWYW(time)
         village_data = data[int(params['village'])]
-        #TODO fixes required
-        df = village_data[(village_data['Year'] > y1) | ((village_data['Year'] == y1) & (village_data['Week'] >= w1)) & (village_data['Year'] < y2) | (
-            (village_data['Year'] == y2) & (village_data['Week'] <= w2))]
-        return(df[['Year', 'Week', params['ticker']]])
+        village_data['Time_ID'] = village_data['Year'] *52 +village_data['Week']
+        return(village_data[(village_data["Time_ID"]>=(y1*52+w1)) & (village_data["Time_ID"]<=(y2*52+w2))]) 
         
 
     def getPlot(self, params):
@@ -105,12 +104,11 @@ class NOAA_vis(server.App):
         df_copy = df.copy()
         df_copy = df_copy.reset_index(drop=True)
         for i in range(len(df_copy[['Year','Week']].values)):
-            df_copy['Week'][i] = str(df_copy['Year'][i]).join(str(df_copy['Week'][i]))
+            df_copy['Week'][i] = str(df_copy['Year'][i]) +"-" +str(df_copy['Week'][i])
             df_copy.drop(['Year'], axis=1)
         print(df_copy)
         plot = df_copy.plot(x='Week', y=params['ticker'], xlabel="Year-week", ylabel="Value")
         return plot.get_figure()
-        #TODO fix the data naming
 
 
 app = NOAA_vis()
