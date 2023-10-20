@@ -96,7 +96,7 @@ class NOAA_vis(server.App):
         y1, w1, y2, w2 = parseYWYW(time)
         village_data = data[int(params['village'])]
         village_data['Time_ID'] = village_data['Year'] *52 +village_data['Week']
-        return(village_data[(village_data["Time_ID"]>=(y1*52+w1)) & (village_data["Time_ID"]<=(y2*52+w2))]) 
+        return(village_data[(village_data["Time_ID"]>=(y1*52+w1)) & (village_data["Time_ID"]<=(y2*52+w2))].iloc[:, :-1]) 
         
 
     def getPlot(self, params):
